@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello | 登录注册表单</title>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+<!-- Sign In -->
+<div class="container">
+    <div class="container__form container--signin">
+        <form action="/ta_war/loginServlet" class="form" method="post" id="form2">
+            <h2 class="form__title">登录</h2>
+            <input type="text" name="username_login" id="username_login" placeholder="用户名" class="input"/>
+            <input type="password" name="password_login" id="password_login" placeholder="密码" class="input"/>
+            <a href="./forgotpass.html" class="link">忘了密码?</a>
+            <button class="btn" type="submit" id="login_button">登录</button>
+        </form>
+    </div>
+    <!-- Sign Up -->
+    <div class="container__form container--signup">
+        <form action="/ta_war/registerServlet" method="post" class="form" id="form1">
+            <h2 class="form__title">注册</h2>
+            <input type="text" id="username_register" placeholder="用户名" class="input"/>
+            <input type="password" id="password_register" placeholder="密码" class="input"/>
+            <button class="btn" type="submit" id="register_button">注册</button>
+        </form>
+    </div>
+
+
+    <script>
+
+        // 注册按钮事件监听器
+        document.getElementById('register_button').addEventListener('click', function (event) {
+            event.preventDefault(); // 防止表单默认提交行为
+            // 获取输入的用户名、邮箱和密码
+            const username = document.getElementById('username_register').value;
+            const password = document.getElementById('password_register').value;
+
+            if (!username || !password) {
+                alert("注册失败：用户名或密码不能为空");
+                return;
+            }
+            const user_data = {name: username, password: password};
+
+            // 发送POST请求到指定的后端
+            try {
+                fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user_data)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('请求失败');
+                        }
+                        return response.json(); // 响应解析为 JSON 对象
+                    })
+                    .then(data => {
+                        // 在这里处理响应数据，更新页面等操作
+                        if (data) {
+                            alert('注册成功')
+                            location.reload()
+                        } else {
+                            alert('注册失败')
+                        }
+                    });
+            } catch (error) {
+                alert('注册失败：网络错误');
+            }
+        })
+
+        //登录按钮监听事件
+        document.getElementById('login_button').addEventListener('click', function (event) {
+            event.preventDefault(); // 防止表单默认提交行为
+            // 获取输入的邮箱和密码
+            const username_login = document.getElementById('username_login').value;
+            const password_login = document.getElementById('password_login').value;
+
+            // 登录用户名密码是否为空
+            if (!username_login || !password_login) {
+                alert("请输入用户名和密码！");
+                return;
+            }
+            const user_data = {name: username_login, password: password_login};
+
+            try {
+                fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user_data)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('请求失败')
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(data)
+                        if (data) {
+                            alert('登录成功 即将跳转')                             // 跳转页面
+                            setTimeout(function() {
+                            console.log('Delayed for 2 seconds.');
+                            }, 1000);
+                            window.location.href = 'http://localhost:5173';
+                        } else {
+                            alert('错误的账号和密码')
+                            location.reload()
+                        }
+                    });
+
+            } catch (error) {
+                alert('登录失败：网络错误');
+            }
+        });
+    </script>
+    <!-- Overlay -->
+    <div class="container__overlay">
+        <div class="overlay">
+            <div class="overlay__panel overlay--left">
+                <button class="btn" id="signIn">登录</button>
+            </div>
+            <div class="overlay__panel overlay--right">
+                <button class="btn" id="signUp">注册</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/script.js"></script>
+</html>
